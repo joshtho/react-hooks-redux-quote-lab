@@ -3,25 +3,25 @@
 // TODO: Create action creators as defined in tests
 export const addQuote = quote => {
   return {
-    type: "quote/add",
+    type: "quotes/add",
     payload: quote
   }
 }
 export const removeQuote = id => {
   return {
-    type: "quote/remove",
+    type: "quotes/remove",
     payload: id
   }
 }
-export const upvote = id => {
+export const upvoteQuote = id => {
   return {
-    type: "quote/upvote",
+    type: "quotes/upvote",
     payload: id
   }
 }
-export const downvote = id => {
+export const downvoteQuote = id => {
   return {
-    type: "quote/downvote",
+    type: "quotes/downvote",
     payload: id
   }
 }
@@ -31,10 +31,30 @@ const initialState = [];
 
 export default function quotesReducer(state = initialState, action) {
   switch (action.type) {
-    case "quote/add":
+    case "quotes/add":
       return [...state, action.payload]
-    case "quote/remove":
-      return state.filter(quote => quote.id !== quote.payload)
+    case "quotes/remove":
+      return state.filter(quote => quote.id !== action.payload)
+    case "quotes/upvote":
+      return state.map(quote => {
+        if (quote.id === action.payload) {
+          return {
+            ...quote, 
+            votes: quote.votes + 1
+          }
+        } else {
+          return quote
+        }
+      })
+      case "quotes/downvote":
+        return state.map(quote => {
+          if (quote.id === action.payload && quote.votes > 0) {
+            return {
+              ...quote,
+              votes: quote.votes -1
+            }
+          } else {return quote}
+        })
     default:
       return state;
   }

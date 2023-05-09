@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { v4 as uuid } from "uuid";
 import { addQuote } from "./quotesSlice";
+import { useDispatch } from "react-redux";
 
 function QuoteForm() {
   const [formData, setFormData] = useState({
@@ -10,12 +11,20 @@ function QuoteForm() {
     // look at the form to determine what keys need to go here
   });
 
+  const dispatch = useDispatch()
+
   function handleChange(event) {
     // Handle Updating Component State
-    setFormData([...formData, [event.target.id] : event.target.value])
+    setFormData({...formData, [event.target.name] : event.target.value})
   }
 
   function handleSubmit(event) {
+    event.preventDefault()
+    dispatch(addQuote({...formData, id: uuid(), votes: 0}))
+    setFormData({
+      author: "",
+      content: ""
+    })
     // Handle Form Submit event default
     // Create quote object from state
     // Pass quote object to action creator
@@ -28,7 +37,7 @@ function QuoteForm() {
         <div className="col-md-8 col-md-offset-2">
           <div className="panel panel-default">
             <div className="panel-body">
-              <form className="form-horizontal">
+              <form className="form-horizontal" onSubmit={handleSubmit}>
                 <div className="form-group">
                   <label htmlFor="content" className="col-md-4 control-label">
                     Quote
@@ -37,6 +46,7 @@ function QuoteForm() {
                     <textarea
                       className="form-control"
                       id="content"
+                      name="content"
                       value={formData.content}
                       onChange={handleChange}
                     />
@@ -51,6 +61,7 @@ function QuoteForm() {
                       className="form-control"
                       type="text"
                       id="author"
+                      name="author"
                       value={formData.author}
                       onChange={handleChange}
                     />
